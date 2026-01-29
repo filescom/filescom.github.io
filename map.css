@@ -45,3 +45,16 @@ body {
     text-decoration: underline;
   }
   
+  .marker-list__search {
+    width: 100%;
+    min-width: 340px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .marker-list__search:focus {
+    border-color: #838181;
+    outline: none;
+  }
