@@ -1,77 +1,93 @@
+// Ваш Mapbox токен
+mapboxgl.accessToken = 'pk.eyJ1IjoiZGltODEyOTUiLCJhIjoiY2x6eWp4d2JrMGc1bTJtb3J2dXVwM3AwaiJ9.hRZZSsWhuK1_HOCA8HGIWA';
 
-  // Ваш Mapbox токен
-  mapboxgl.accessToken = 'pk.eyJ1IjoiZGltODEyOTUiLCJhIjoiY2x6eWp4d2JrMGc1bTJtb3J2dXVwM3AwaiJ9.hRZZSsWhuK1_HOCA8HGIWA';
+// Создаем карту
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/dim81295/cltqxac7z00c501qwdrx0g501',
+  center: [42.095701, 61.083111],
+  zoom: 9
+});
 
-  // Функция загрузки данных из JSON-файла
-  function loadMarkers() {
-    return fetch('./markers.json')
-      .then(response => response.json())
-      .catch(error => {
-        console.error('Ошибка при загрузке данных:', error);
-        return [];
-      });
-  }
+// Руссификация карты
+mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+map.addControl(new MapboxLanguage({ defaultLanguage: 'ru' }));
 
-  // Создаем карту
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/dim81295/cltqxac7z00c501qwdrx0g501',
-    center: [42.095701, 61.083111],
-    zoom: 9
-  });
+// Добавляем ползунок масштаба
+map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
 
-  // Руссификация карты
-  mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
-  map.addControl(new MapboxLanguage({ defaultLanguage: 'ru' }));
-
-  // Добавляем ползунок масштаба
-  map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
-
-  // Получаем элемент списка маркеров
-  const markerListContent = document.getElementById('marker-list-content');
-
-  // Загружаем маркеры из JSON-файла и добавляем их на карту
-  loadMarkers().then(locations => {
-    locations.forEach((location, index) => {
-      // Добавляем маркер
-      const marker = new mapboxgl.Marker({ color: location.color })
-        .setLngLat(location.coordinates)
-        .addTo(map);
-        
-
-      // Создаем попап
-      const popupContent = `
-        <div style="max-width: 300px;">
-          <img src="${location.image}" style="width: 100%; border-radius: 6px; margin-bottom: 8px;">
-          <strong>${location.name}</strong><br>
-          ${location.road}<br><br>
-          <strong>Длина:</strong> ${location.length} <br>
-          <strong>Материал:</strong> ${location.material}<br>
-          <strong>Год постройки:</strong> ${location.year}<br>
-          <strong>Категория дороги:</strong> ${location.category}
-        </div>
-      `;
-      const popup = new mapboxgl.Popup({ offset: 25, closeButton: false}).setHTML(popupContent);
-      marker.setPopup(popup);
-
-      // Добавляем название маркера в список
-      const listItem = document.createElement('li');
-      listItem.textContent = `${index+1}. ${location.name}` ;
-
-      // Добавляем событие клика по элементу списка
-      listItem.addEventListener('click', () => {
-        map.flyTo({ center: location.coordinates, zoom: 12 });
-      });
-
-      markerListContent.appendChild(listItem);
-    });
-  });
-  // Ограничим карту рамками Архангельской области
-// bbox: [minLng, minLat, maxLng, maxLat]
+// Ограничим карту рамками Архангельской области
 const arkhangelskBounds = [
   [36.0, 59.0], // юго-запад
   [53.0, 68.0]  // северо-восток
 ];
-
 map.setMaxBounds(arkhangelskBounds);
 
+// Получаем элементы поиска и списка
+const markerListContent = document.getElementById('marker-list__content');
+const searchInput = document.querySelector('.marker-list__search');
+
+// Функция загрузки данных из JSON
+function loadMarkers() {
+  return fetch('./markers.json')
+    .then(response => response.json())
+    .catch(error => {
+      console.error('Ошибка при загрузке данных:', error);
+      return [];
+    });
+}
+
+// Массив для хранения маркеров и элементов списка
+const markersOnMap = [];
+
+loadMarkers().then(locations => {
+  locations.forEach((location, index) => {
+    // Создаем маркер
+    const marker = new mapboxgl.Marker({ color: location.color })
+      .setLngLat(location.coordinates)
+      .addTo(map);
+
+    // Попап
+    const popupContent = `
+      <div style="max-width: 300px;">
+        <img src="${location.image}" style="width: 100%; border-radius: 6px; margin-bottom: 8px;">
+        <strong>${location.name}</strong><br>
+        ${location.road}<br><br>
+        <strong>Длина:</strong> ${location.length} <br>
+        <strong>Материал:</strong> ${location.material}<br>
+        <strong>Год постройки:</strong> ${location.year}<br>
+        <strong>Категория дороги:</strong> ${location.category}
+      </div>
+    `;
+    const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupContent);
+    marker.setPopup(popup);
+
+    // Элемент списка
+    const listItem = document.createElement('li');
+    listItem.textContent = `${location.name}`;
+    listItem.style.cursor = 'pointer';
+    listItem.addEventListener('click', () => {
+      map.flyTo({ center: location.coordinates, zoom: 12 });
+      marker.togglePopup();
+    });
+
+    markerListContent.appendChild(listItem);
+
+    markersOnMap.push({
+      marker,
+      listItem,
+      name: location.name.toLowerCase()
+    });
+  });
+});
+
+// Поиск по списку и маркерам
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+
+  markersOnMap.forEach(item => {
+    const match = item.name.includes(query);
+    item.listItem.style.display = match ? '' : 'none';
+    item.marker.getElement().style.display = match ? '' : 'none';
+  });
+});
