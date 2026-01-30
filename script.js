@@ -1,3 +1,5 @@
+
+
 // Ваш Mapbox токен
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGltODEyOTUiLCJhIjoiY2x6eWp4d2JrMGc1bTJtb3J2dXVwM3AwaiJ9.hRZZSsWhuK1_HOCA8HGIWA';
 
@@ -8,6 +10,7 @@ const map = new mapboxgl.Map({
   center: [42.095701, 61.083111],
   zoom: 9
 });
+
 
 // Руссификация карты
 mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
@@ -22,6 +25,7 @@ const arkhangelskBounds = [
   [53.0, 68.0]  // северо-восток
 ];
 map.setMaxBounds(arkhangelskBounds);
+
 
 // Получаем элементы поиска и списка
 const markerListContent = document.getElementById('marker-list__content');
@@ -70,6 +74,7 @@ loadMarkers().then(locations => {
 
     // Элемент списка
     const listItem = document.createElement('li');
+    listItem.classList.add('marker-list__item')
     listItem.textContent = `${location.name}`;
     listItem.style.cursor = 'pointer';
     listItem.addEventListener('click', () => {
@@ -97,3 +102,4 @@ searchInput.addEventListener('input', (e) => {
     item.marker.getElement().style.display = match ? '' : 'none';
   });
 });
+

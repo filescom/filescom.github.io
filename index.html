@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./map.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
+
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <title>Интерактивная карта мостов</title>
 </head>
@@ -20,7 +21,13 @@
   <!-- Список названий маркеров -->
   <div class="marker-list">
     <ul id="marker-list__content">
-      <input class="marker-list__search" placeholder="Поиск" type="search">
+      <div class="marker-list__group">
+        <input class="marker-list__search" placeholder="Поиск" type="search">
+
+      <svg class="marker-list__search-icon" viewBox="0 0 24 24" width="20" height="20">
+        <use xlink:href="./img/search-icon.svg"></use>
+      </svg>
+      </div>
     </ul> <!-- Список будет здесь -->
   </div>
   <script src="./script.js"></script>
