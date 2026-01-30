@@ -28,13 +28,19 @@ const markerListContent = document.getElementById('marker-list__content');
 const searchInput = document.querySelector('.marker-list__search');
 
 // Функция загрузки данных из JSON
-function loadMarkers() {
-  return fetch('./markers.json')
-    .then(response => response.json())
-    .catch(error => {
-      console.error('Ошибка при загрузке данных:', error);
-      return [];
-    });
+async function loadMarkers() {
+  try {
+    const response = await fetch('./markers.json');
+
+    if (!response.ok) {
+      throw new Error(`HTTP ошибка: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Ошибка при загрузке данных:', error);
+    return [];
+  }
 }
 
 // Массив для хранения маркеров и элементов списка
