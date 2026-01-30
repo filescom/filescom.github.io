@@ -1,3 +1,5 @@
+
+
 // Ваш Mapbox токен
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGltODEyOTUiLCJhIjoiY2x6eWp4d2JrMGc1bTJtb3J2dXVwM3AwaiJ9.hRZZSsWhuK1_HOCA8HGIWA';
 
@@ -8,6 +10,7 @@ const map = new mapboxgl.Map({
   center: [42.095701, 61.083111],
   zoom: 9
 });
+
 
 // Руссификация карты
 mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
@@ -23,18 +26,25 @@ const arkhangelskBounds = [
 ];
 map.setMaxBounds(arkhangelskBounds);
 
+
 // Получаем элементы поиска и списка
 const markerListContent = document.getElementById('marker-list__content');
 const searchInput = document.querySelector('.marker-list__search');
 
 // Функция загрузки данных из JSON
-function loadMarkers() {
-  return fetch('./markers.json')
-    .then(response => response.json())
-    .catch(error => {
-      console.error('Ошибка при загрузке данных:', error);
-      return [];
-    });
+async function loadMarkers() {
+  try {
+    const response = await fetch('./markers.json');
+
+    if (!response.ok) {
+      throw new Error(`HTTP ошибка: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Ошибка при загрузке данных:', error);
+    return [];
+  }
 }
 
 // Массив для хранения маркеров и элементов списка
@@ -64,6 +74,7 @@ loadMarkers().then(locations => {
 
     // Элемент списка
     const listItem = document.createElement('li');
+    listItem.classList.add('marker-list__item')
     listItem.textContent = `${location.name}`;
     listItem.style.cursor = 'pointer';
     listItem.addEventListener('click', () => {
@@ -91,3 +102,4 @@ searchInput.addEventListener('input', (e) => {
     item.marker.getElement().style.display = match ? '' : 'none';
   });
 });
+

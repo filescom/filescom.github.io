@@ -35,26 +35,46 @@ body {
     margin: 0;
   }
 
-  .marker-list li {
+  .marker-list__search {
+    width: 100%;
+    min-width: 340px;
+    border: 1px solid #1F568B;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: #1F568B;
+  }
+  
+  .marker-list__search:focus {
+    border-color: #FF7836;
+    outline: none;
+  }
+
+  .marker-list__item {
+    color: #1F568B;
     margin: 5px 0;
     margin-bottom: 8px; /* Отступы между элементами списка */
   }
 
-  .marker-list li:hover {
+  .marker-list__item:hover {
     cursor: pointer;
-    text-decoration: underline;
+    color: #FF7836;
+    opacity: 0.8;
+    transition: color 0.2s ease, transform 0.2s ease;
   }
-  
-  .marker-list__search {
-    width: 100%;
-    min-width: 340px;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    border-radius: 20px;
+
+  .marker-list__group {
+    position: relative;
+  }
+
+  .marker-list__search-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
     margin-bottom: 5px;
+    color: #1F568B;
   }
-  
-  .marker-list__search:focus {
-    border-color: #838181;
-    outline: none;
+
+ .marker-list__search:focus + .marker-list__search-icon {
+    color: #FF7836;
   }
