@@ -24,7 +24,7 @@ const arkhangelskBounds = [
   [36.0, 59.0], // юго-запад
   [53.0, 68.0]  // северо-восток
 ];
-map.setMaxBounds(arkhangelskBounds);
+map.setMaxBounds(arkhangelskBounds);=
 
 
 // Получаем элементы поиска и списка
